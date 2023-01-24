@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Task1.DoNotChange;
 
@@ -43,37 +44,20 @@ namespace Task1
 
         public static IEnumerable<Customer> Linq3(IEnumerable<Customer> customers, decimal limit)
         {
-            var query = from customer in customers
-                        let total = GetTotalExpenses(customer)
-                        where total > limit
-                        select customer;
-            return query.ToList();
+            return customers.Where(x => x.Orders.Select(o => o.Total)
+            .Sum() > limit && x.Orders.Any());
         }
 
         public static IEnumerable<(Customer customer, DateTime dateOfEntry)> Linq4(
             IEnumerable<Customer> customers
         )
         {
-            var result = new List<(Customer customer, DateTime dateOfEntry)>();
             if (customers == null)
                 throw new ArgumentNullException();
-            else
-            {
-                foreach (var customer in customers)
-                    if (customer.Orders != null && customer.Orders.Count() > 0)
-                    {
-                        var orders = new List<Order>();
-                        foreach (var order in customer.Orders)
-                        {
-                            orders.Add(order);
-                        }
-                        var minOrder = orders.OrderBy(o => o.OrderDate).FirstOrDefault().OrderDate;
-                        result.Insert(0, (customer, minOrder));
-                    }
-                    else
-                        continue;
-            }
-            return result;
+
+            return customers.Where(c => c.Orders.Any())
+                    .Select(x => (customer: x, dateOfEntry: x.Orders.OrderBy(o => o.OrderDate)
+                    .FirstOrDefault().OrderDate));
         }
 
         public static IEnumerable<(Customer customer, DateTime dateOfEntry)> Linq5(
@@ -83,32 +67,14 @@ namespace Task1
             var result = new List<(Customer customer, DateTime dateOfEntry)>();
             if (customers == null)
                 throw new ArgumentNullException();
-            else
-            {
-                foreach (var customer in customers)
-                    if (customer.Orders != null && customer.Orders.Count() > 0)
-                    {
-                        var orders = new List<Order>();
-                        foreach (var order in customer.Orders)
-                        {
-                            orders.Add(order);
-                        }
-                        var minOrder = orders.OrderBy(o => o.OrderDate).FirstOrDefault().OrderDate;
-                        result.Insert(0, (customer, minOrder));
-                    }
-                    else
-                        continue;
-            }
-            
-            var orderedResult = from res in result
-                                let total = GetTotalExpenses(res.customer)
-                                orderby res.dateOfEntry.Year
-                                orderby res.dateOfEntry.Month
-                                orderby total descending
-                                orderby res.customer.CompanyName
-                                select res;
 
-            return orderedResult;
+            return customers.Where(c => c.Orders.Any())
+                     .Select(x => (customer: x, dateOfEntry: x.Orders.OrderBy(o => o.OrderDate)
+                     .FirstOrDefault().OrderDate))
+                     .OrderBy(c => c.dateOfEntry.Year)
+                     .ThenBy(c => c.dateOfEntry.Month)
+                     .ThenByDescending(c => c.customer.Orders.Select(o => o.Total).Sum())
+                     .ThenBy(x => x.customer.CompanyName);
         }
 
         public static IEnumerable<Customer> Linq6(IEnumerable<Customer> customers)
@@ -116,29 +82,18 @@ namespace Task1
             if (customers == null)
                 throw new ArgumentNullException();
 
-            var result = new List<Customer>();
-            foreach (var customer in customers)
-            {
-                var postalCode = customer.PostalCode;
-                var phone = customer.Phone;
-                var region = customer.Region;
-                int p = 0;
-
-                if (int.TryParse(postalCode, out p) == false || region == null || phone.StartsWith("(") == false)
-                {
-                    result.Add(customer);
-                }
-                else
-                    continue;
-            }
-            return result;
+            return customers
+                .Where(c => int.TryParse(c.PostalCode, out _) != true || c.Region == null || c.Phone.StartsWith("(") == false);
         }
 
         public static IEnumerable<Linq7CategoryGroup> Linq7(IEnumerable<Product> products)
         {
+            if (products == null)
+                throw new ArgumentNullException();
+
             /* example of Linq7result
 
-             category - Beverages
+             category - Beverages // group
 	            UnitsInStock - 39
 		            price - 18.0000
 		            price - 19.0000
@@ -146,8 +101,8 @@ namespace Task1
 		            price - 18.0000
 		            price - 19.0000
              */
-
-            throw new NotImplementedException();
+            var x = products.GroupBy(p => new { p.Category, p.UnitsInStock }, (key, group) => new Linq7CategoryGroup { Category = key.Category, UnitsInStockGroup = new Linq7UnitsInStockGroup { UnitsInStock = key.UnitsInStock, Prices = group.Select(c => c.UnitPrice).OrderBy(c => c) } }) ;
+            return null;
         }
 
         public static IEnumerable<(decimal category, IEnumerable<Product> products)> Linq8(
