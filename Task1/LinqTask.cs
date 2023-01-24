@@ -101,7 +101,7 @@ namespace Task1
 		            price - 18.0000
 		            price - 19.0000
              */
-            var x = products.GroupBy(p => new { p.Category, p.UnitsInStock }, (key, group) => new Linq7CategoryGroup { Category = key.Category, UnitsInStockGroup = new Linq7UnitsInStockGroup { UnitsInStock = key.UnitsInStock, Prices = group.Select(c => c.UnitPrice).OrderBy(c => c) } }) ;
+            //var x = products.GroupBy(p => new { p.Category, p.UnitsInStock }, (key, group) => new Linq7CategoryGroup { Category = key.Category, UnitsInStockGroup = new Linq7UnitsInStockGroup { UnitsInStock = key.UnitsInStock, Prices = group.Select(c => c.UnitPrice).OrderBy(c => c) } }) ;
             return null;
         }
 
@@ -112,19 +112,29 @@ namespace Task1
             decimal expensive
         )
         {
-            throw new NotImplementedException();
+            if (products == null)
+                throw new ArgumentNullException();
+
+            return null; //products.GroupBy(p => p.UnitPrice)
         }
 
         public static IEnumerable<(string city, int averageIncome, int averageIntensity)> Linq9(
             IEnumerable<Customer> customers
         )
         {
-            throw new NotImplementedException();
+            if (customers == null)
+                throw new ArgumentNullException();
+
+            return null;
         }
 
         public static string Linq10(IEnumerable<Supplier> suppliers)
         {
-            throw new NotImplementedException();
+            if (suppliers == null)
+                throw new ArgumentNullException();
+
+            return suppliers.OrderBy(s => s.Country.Length).ThenBy(s => s.Country)
+                .Select(s => s.Country).Distinct().Aggregate((i, j) => i + j);
         }
     }
 }
