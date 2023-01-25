@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography;
 using Task1.DoNotChange;
 
 namespace Task1
@@ -101,7 +102,16 @@ namespace Task1
 		            price - 18.0000
 		            price - 19.0000
              */
-            //var x = products.GroupBy(p => new { p.Category, p.UnitsInStock }, (key, group) => new Linq7CategoryGroup { Category = key.Category, UnitsInStockGroup = new Linq7UnitsInStockGroup { UnitsInStock = key.UnitsInStock, Prices = group.Select(c => c.UnitPrice).OrderBy(c => c) } }) ;
+
+            var result = from product in products
+                         group product by product.Category into g
+                         from g2 in (
+                         from product in products
+                         group product by product.UnitsInStock
+                         )
+                         group g2 by g.Key;
+
+            //var x = products.GroupBy(p => new { p.Category, GROP }, (key, group) => new Linq7CategoryGroup { Category = key.Category, UnitsInStockGroup = new Linq7UnitsInStockGroup { UnitsInStock = key.UnitsInStock, Prices = group.Select(c => c.UnitPrice).OrderBy(c => c) }) ;
             return null;
         }
 
@@ -115,7 +125,7 @@ namespace Task1
             if (products == null)
                 throw new ArgumentNullException();
 
-            return null; //products.GroupBy(p => p.UnitPrice)
+            return null;
         }
 
         public static IEnumerable<(string city, int averageIncome, int averageIntensity)> Linq9(
@@ -124,6 +134,9 @@ namespace Task1
         {
             if (customers == null)
                 throw new ArgumentNullException();
+
+            //var x =  from customer in customers
+
 
             return null;
         }
