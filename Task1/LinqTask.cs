@@ -92,27 +92,9 @@ namespace Task1
             if (products == null)
                 throw new ArgumentNullException();
 
-            /* example of Linq7result
-
-             category - Beverages // group
-	            UnitsInStock - 39
-		            price - 18.0000
-		            price - 19.0000
-	            UnitsInStock - 17
-		            price - 18.0000
-		            price - 19.0000
-             */
-
-            var result = from product in products
-                         group product by product.Category into g
-                         from g2 in (
-                         from product in products
-                         group product by product.UnitsInStock
-                         )
-                         group g2 by g.Key;
-
-            //var x = products.GroupBy(p => new { p.Category, GROP }, (key, group) => new Linq7CategoryGroup { Category = key.Category, UnitsInStockGroup = new Linq7UnitsInStockGroup { UnitsInStock = key.UnitsInStock, Prices = group.Select(c => c.UnitPrice).OrderBy(c => c) }) ;
-            return null;
+            return products.GroupBy(item => item.Category,
+              (key, group) => new Linq7CategoryGroup { Category = key, UnitsInStockGroup = group.GroupBy(unit => unit.UnitsInStock, (key, newGroup) => new Linq7UnitsInStockGroup { UnitsInStock = key, Prices = newGroup.Select(i => i.UnitPrice).OrderBy(i => i) }) }).ToList();
+            
         }
 
         public static IEnumerable<(decimal category, IEnumerable<Product> products)> Linq8(
