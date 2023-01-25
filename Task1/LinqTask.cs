@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Security.Cryptography;
 using Task1.DoNotChange;
 
 namespace Task1
@@ -93,10 +91,18 @@ namespace Task1
                 throw new ArgumentNullException();
 
             return products.GroupBy(item => item.Category,
-              (key, group) => new Linq7CategoryGroup { Category = key, UnitsInStockGroup = group.GroupBy(unit => unit.UnitsInStock, (key, newGroup) 
-              => new Linq7UnitsInStockGroup { UnitsInStock = key, Prices = newGroup
-              .Select(i => i.UnitPrice).OrderBy(i => i) }) }).ToList();
-            
+              (key, group) => new Linq7CategoryGroup
+              {
+                  Category = key,
+                  UnitsInStockGroup = group.GroupBy(unit => unit.UnitsInStock, (key, newGroup)
+              => new Linq7UnitsInStockGroup
+              {
+                  UnitsInStock = key,
+                  Prices = newGroup
+              .Select(i => i.UnitPrice).OrderBy(i => i)
+              })
+              }).ToList();
+
         }
 
         public static IEnumerable<(decimal category, IEnumerable<Product> products)> Linq8(
@@ -109,6 +115,29 @@ namespace Task1
             if (products == null)
                 throw new ArgumentNullException();
 
+            var resultgroup1 = from product in products
+                               where (decimal)product.UnitPrice <= cheap
+                               group product by product.UnitPrice into rowGroup
+                               select new
+                               {
+                                   category = cheap
+                               };
+
+            var resultgroup2 = from product in products
+                               where (decimal)product.UnitPrice > cheap && (decimal)product.UnitPrice <= middle
+                               group product by product.UnitPrice into rowGroup
+                               select new
+                               {
+                                   category = middle
+                               };
+
+            var resultgroup3 = from product in products
+                               where (decimal)product.UnitPrice > middle && (decimal)product.UnitPrice <= expensive
+                               group product by product.UnitPrice into rowGroup
+                               select new
+                               {
+                                   category = expensive
+                               };
             return null;
         }
 
