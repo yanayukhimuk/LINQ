@@ -93,7 +93,9 @@ namespace Task1
                 throw new ArgumentNullException();
 
             return products.GroupBy(item => item.Category,
-              (key, group) => new Linq7CategoryGroup { Category = key, UnitsInStockGroup = group.GroupBy(unit => unit.UnitsInStock, (key, newGroup) => new Linq7UnitsInStockGroup { UnitsInStock = key, Prices = newGroup.Select(i => i.UnitPrice).OrderBy(i => i) }) }).ToList();
+              (key, group) => new Linq7CategoryGroup { Category = key, UnitsInStockGroup = group.GroupBy(unit => unit.UnitsInStock, (key, newGroup) 
+              => new Linq7UnitsInStockGroup { UnitsInStock = key, Prices = newGroup
+              .Select(i => i.UnitPrice).OrderBy(i => i) }) }).ToList();
             
         }
 
