@@ -120,7 +120,8 @@ namespace Task1
                                group product by product.UnitPrice into rowGroup
                                select new
                                {
-                                   category = cheap
+                                   category = (decimal)rowGroup.Key,
+                                   products = rowGroup.ToList()
                                };
 
             var resultgroup2 = from product in products
@@ -128,7 +129,8 @@ namespace Task1
                                group product by product.UnitPrice into rowGroup
                                select new
                                {
-                                   category = middle
+                                   category = (decimal)rowGroup.Key,
+                                   products = rowGroup.ToList()
                                };
 
             var resultgroup3 = from product in products
@@ -136,9 +138,11 @@ namespace Task1
                                group product by product.UnitPrice into rowGroup
                                select new
                                {
-                                   category = expensive
+                                   category = (decimal)rowGroup.Key,
+                                   products = rowGroup.ToList()
                                };
-            return null;
+            var list = new List<(decimal category, IEnumerable<Product> products)>() { resultgroup1, resultgroup2, resultgroup3 };
+            return list;
         }
 
         public static IEnumerable<(string city, int averageIncome, int averageIntensity)> Linq9(
