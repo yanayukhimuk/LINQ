@@ -141,8 +141,8 @@ namespace Task1
                                    category = (decimal)rowGroup.Key,
                                    products = rowGroup.ToList()
                                };
-            var list = new List<(decimal category, IEnumerable<Product> products)>() { resultgroup1, resultgroup2, resultgroup3 };
-            return list;
+            //var list = new List<(decimal category, IEnumerable<Product> products)>() { resultgroup1, resultgroup2, resultgroup3 };
+            return null;
         }
 
         public static IEnumerable<(string city, int averageIncome, int averageIntensity)> Linq9(
