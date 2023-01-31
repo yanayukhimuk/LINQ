@@ -105,7 +105,7 @@ namespace Task1
 
         }
 
-        public static IEnumerable<(decimal category, IEnumerable<Product> products)> Linq8(
+        public static IEnumerable<(decimal category, List<Product> products)> Linq8(
             IEnumerable<Product> products,
             decimal cheap,
             decimal middle,
@@ -114,6 +114,15 @@ namespace Task1
         {
             if (products == null)
                 throw new ArgumentNullException();
+
+            //var x = products.Where(p => p.UnitPrice <= cheap).GroupBy(i => i.UnitPrice)
+            //    .Select(x => (category: x.Key, products: x.ToList()));
+
+            //var y = products.Where(p => p.UnitPrice > cheap && p.UnitPrice <= middle).GroupBy(i => i.UnitPrice)
+            //    .Select(x => (category: x.Key, products: x.ToList()));
+
+            //var z = products.Where(p => p.UnitPrice > middle && p.UnitPrice <= expensive).GroupBy(i => i.UnitPrice)
+            //    .Select(x => (category: x.Key, products: x.ToList()));
 
             var resultgroup1 = from product in products
                                where (decimal)product.UnitPrice <= cheap
@@ -141,7 +150,11 @@ namespace Task1
                                    category = (decimal)rowGroup.Key,
                                    products = rowGroup.ToList()
                                };
-            //var list = new List<(decimal category, IEnumerable<Product> products)>() { resultgroup1, resultgroup2, resultgroup3 };
+            //var list = new List<(decimal category, List<Product> products)>();
+            //list.AddRange(x);
+            //list.AddRange(y);
+            //list.AddRange(z);
+
             return null;
         }
 
