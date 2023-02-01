@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Task1.DoNotChange;
 
 namespace Task1
@@ -115,47 +116,20 @@ namespace Task1
             if (products == null)
                 throw new ArgumentNullException();
 
-            //var x = products.Where(p => p.UnitPrice <= cheap).GroupBy(i => i.UnitPrice)
-            //    .Select(x => (category: x.Key, products: x.ToList()));
+            var x = products.Where(p => p.UnitPrice <= cheap).GroupBy(i => i.UnitPrice)
+                .Select(x => (category: cheap, products: x.ToList()));
 
-            //var y = products.Where(p => p.UnitPrice > cheap && p.UnitPrice <= middle).GroupBy(i => i.UnitPrice)
-            //    .Select(x => (category: x.Key, products: x.ToList()));
+            var y = products.Where(p => p.UnitPrice > cheap && p.UnitPrice <= middle);
 
-            //var z = products.Where(p => p.UnitPrice > middle && p.UnitPrice <= expensive).GroupBy(i => i.UnitPrice)
-            //    .Select(x => (category: x.Key, products: x.ToList()));
+            var z = products.Where(p => p.UnitPrice > middle && p.UnitPrice <= expensive).GroupBy(i => i.UnitPrice)
+                .Select(x => (category: expensive, products: x.ToList()));
 
-            var resultgroup1 = from product in products
-                               where (decimal)product.UnitPrice <= cheap
-                               group product by product.UnitPrice into rowGroup
-                               select new
-                               {
-                                   category = (decimal)rowGroup.Key,
-                                   products = rowGroup.ToList()
-                               };
+            var list = new List<(decimal category, List<Product> products)>();
+            list.AddRange(x);
+            list.Add((category: middle, products: y.ToList()));
+            list.AddRange(z);
 
-            var resultgroup2 = from product in products
-                               where (decimal)product.UnitPrice > cheap && (decimal)product.UnitPrice <= middle
-                               group product by product.UnitPrice into rowGroup
-                               select new
-                               {
-                                   category = (decimal)rowGroup.Key,
-                                   products = rowGroup.ToList()
-                               };
-
-            var resultgroup3 = from product in products
-                               where (decimal)product.UnitPrice > middle && (decimal)product.UnitPrice <= expensive
-                               group product by product.UnitPrice into rowGroup
-                               select new
-                               {
-                                   category = (decimal)rowGroup.Key,
-                                   products = rowGroup.ToList()
-                               };
-            //var list = new List<(decimal category, List<Product> products)>();
-            //list.AddRange(x);
-            //list.AddRange(y);
-            //list.AddRange(z);
-
-            return null;
+            return list;
         }
 
         public static IEnumerable<(string city, int averageIncome, int averageIntensity)> Linq9(
@@ -165,10 +139,10 @@ namespace Task1
             if (customers == null)
                 throw new ArgumentNullException();
 
-            //var x =  from customer in customers
-
-
-            return null;
+            return customers.GroupBy(c => c.City)
+                .Select(c => (city: c.Key,
+                averageIncome: (int)Math.Round(c.SelectMany(v => v.Orders).Select(t => t.Total).Sum() / c.Count(), 0),
+                averageIntensity: c.SelectMany(v => v.Orders).Count() / c.Count()));
         }
 
         public static string Linq10(IEnumerable<Supplier> suppliers)
